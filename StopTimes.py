@@ -4,29 +4,22 @@ from Reader import Reader
 from StopTime import StopTime
 import os.path
 from pathlib import Path
+from collections import defaultdict
 
 class StopTimes:
 
-    def __init__(self, dirs):
-        gtfs_folder = Path(dirs.gtfs)
-        out_folder = Path(dirs.out)
-        trips = Trips(gtfs_folder)
+    def __init__(self, path):
+        trips = Trips(path)
         print("Trip list created...")
-        read_stoptimes = Reader( gtfs_folder / "stop_times.txt")
+        read_stoptimes = Reader( path / "stop_times.txt")
         line = read_stoptimes.get_line()
         counter = 0
-        if(os.path.isdir(dirs.out)):
-            print("The secified output directory already exists. Please choose another output directory.")
-            quit()
-        elif dirs.out is not "":
-            os.mkdir(dirs.out)
+        self.stops = defaultdict(lambda: defaultdict(list))
         while line:
             stop = (StopTime(line, trips.trip_list))
-            file = open(out_folder / (stop.stop_id + ".txt"), 'a')
-            file.write(stop.departure_time + "," + stop.trip.route_id + "," + stop.trip.service_id + "\n")
-            counter = counter + 1
-            file.close()
+            self.stops[str(stop.stop_id)][str(stop.trip.service_id)].append({"departure_time" : stop.departure_time, "route_id" : stop.trip.route_id })
             line = read_stoptimes.get_line()
-            print(str(counter) + "/~800000 stops processed.")
+            counter = counter + 1
+            print(str(counter) + "/~800000 stops parsed.")
         print("Finished parsing stop times...")
         read_stoptimes.end()

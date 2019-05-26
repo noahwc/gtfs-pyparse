@@ -5,14 +5,17 @@ class Reader:
     def __init__(self, file):
         self.fields = []
         self.fp = open(file, "r")
-        fields.extend(fp.readline().split(","))
+        self.fields.extend(self.fp.readline().rstrip().split(","))
 
-    
     def get_line(self):
-        self.lines = []
-        for line in fp:
-            lines.extend(line.split(","))
-        return lines
+        data = {}
+        line  = self.fp.readline().rstrip().split(",")
+        for el, field in zip (line, self.fields):
+            data[field] = el
+        if len(data) == 1:
+            return None
+        else:
+            return data
 
     def end(self):
         self.fp.close()

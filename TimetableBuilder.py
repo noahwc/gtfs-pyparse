@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from StopTimes import StopTimes
 from pathlib import Path
 from Calendar_dates import Calendar_dates
+from Calendars import Calendars
 import os.path
 import json
 
@@ -19,7 +20,9 @@ class TimetableBuilder:
         gtfs_processor = StopTimes(gtfs_folder)
         self.write_stops(gtfs_processor.stops, out_folder)
         exception_dates = Calendar_dates(gtfs_folder)
-        self.write_dict(exception_dates.calendar_dates_list, out_folder)
+        self.write_dict(exception_dates.calendar_dates_list, out_folder, "exceptions")
+        services = Calendars(gtfs_folder)
+        self.write_dict(services.calendars_list, out_folder, "services")
         print("Timetables output successfully.")
 
 
@@ -37,9 +40,9 @@ class TimetableBuilder:
             json.dump(dataset[data], file, indent = 4)
             file.close()
 
-    def write_dict(self, dictionary, out_folder):
+    def write_dict(self, dictionary, out_folder, filename):
         print("Writing dates to file...")
-        file = open(out_folder / ("exceptions.json"), 'a')
+        file = open(out_folder / (filename +".json"), 'a')
         json.dump(dictionary, file, indent = 4)
         file.close()
 

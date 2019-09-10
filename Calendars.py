@@ -13,19 +13,19 @@ class Calendars:
         while line:
             service = Calendar(line)
             service_info = {"start" : service.start_date, "end" : service.end_date, "id" : service.service_id}
-            if service.mon:
+            if service.mon == "1":
                 self.calendars_list["monday"].append(service_info)
-            if service.tues:
+            if service.tues == "1":
                 self.calendars_list["tuesday"].append(service_info)
-            if service.wed:
+            if service.wed == "1":
                 self.calendars_list["wednesday"].append(service_info)
-            if service.thurs:
+            if service.thurs == "1":
                 self.calendars_list["thursday"].append(service_info)
-            if service.fri:
+            if service.fri == "1":
                 self.calendars_list["friday"].append(service_info)
-            if service.sat:
+            if service.sat == "1":
                 self.calendars_list["saturday"].append(service_info)
-            if service.sat:
+            if service.sun == "1":
                 self.calendars_list["sunday"].append(service_info)
             line = read_calendars.get_line()
         read_calendars.end()

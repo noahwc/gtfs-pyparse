@@ -1,6 +1,6 @@
 # This file models the data of a single line of a calendar_date.txt gtfs file
 
-class Calendar_date:
+class CalendarDate:
 
     def __init__(self, line):
         self.date = line["date"]

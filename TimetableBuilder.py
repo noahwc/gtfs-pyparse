@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 from StopTimes import StopTimes
 from pathlib import Path
-from Calendar_dates import Calendar_dates
+from CalendarDates import CalendarDates
 from Calendars import Calendars
 import os.path
 import json
@@ -19,7 +19,7 @@ class TimetableBuilder:
         self.setup_out_dir(dirs.out)
         gtfs_processor = StopTimes(gtfs_folder)
         self.write_stops(gtfs_processor.stops, out_folder)
-        exception_dates = Calendar_dates(gtfs_folder)
+        exception_dates = CalendarDates(gtfs_folder)
         self.write_dict(exception_dates.calendar_dates_list, out_folder, "exceptions")
         services = Calendars(gtfs_folder)
         self.write_dict(services.calendars_list, out_folder, "services")

@@ -13,9 +13,9 @@ class CalendarDates:
         while line:
             date_info = CalendarDate(line)
             date_dict = {
-                "date" : date_info.date,
-                "service_id" : date_info.service_id,
-                "exception_type" : date_info.exception_type
+                "date" : line["date"],
+                "service_id" : line["service_id"],
+                "exception_type" : line["exception_type"]
             }
             self.calendar_dates_list.append(date_dict)
             line = read_calendar_dates.get_line()

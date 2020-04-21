@@ -4,8 +4,12 @@ from StopTimes import StopTimes
 from pathlib import Path
 from CalendarDates import CalendarDates
 from Calendars import Calendars
+from StopCodes import StopCodes, StopTime
+from Trips import Trips
+from Reader import Reader
 import os.path
 import json
+from collections import defaultdict
 
 class TimetableBuilder:
 
@@ -17,8 +21,8 @@ class TimetableBuilder:
         gtfs_folder = Path(dirs.gtfs)
         out_folder = Path(dirs.out)
         self.setup_out_dir(dirs.out)
-        gtfs_processor = StopTimes(gtfs_folder)
-        self.write_stops(gtfs_processor.stops, out_folder)
+        self.link_stoptimes(gtfs_folder)
+        self.write_stops(out_folder)
         exception_dates = CalendarDates(gtfs_folder)
         self.write_dict(exception_dates.calendar_dates_list, out_folder, "exceptions")
         services = Calendars(gtfs_folder)
@@ -33,11 +37,27 @@ class TimetableBuilder:
         elif path is not "":
             os.mkdir(path)
 
-    def write_stops(self, dataset, out_folder):
+    def link_stoptimes(self, path):
+        trips = Trips(path)
+        stops = StopCodes(path)
+        read_stoptimes = Reader( path / "stop_times.txt")
+        line = read_stoptimes.get_line()
+        counter = 0
+        self.stops = StopCodes(path)
+        while line:
+            stop_time = (StopTime(line, trips.trip_list))
+            stops.add_stop_time(stop_time)
+            line = read_stoptimes.get_line()
+            counter = counter + 1
+            print(str(counter) + " stops parsed.")
+        print("Finished parsing stop times...")
+        read_stoptimes.end()
+
+    def write_stops(self, out_folder):
         print("Writing timetables to file...")
-        for data in dataset:
-            file = open(out_folder / (data + ".json"), 'a')
-            json.dump(dataset[data], file, indent = 4)
+        for stop in self.stops:
+            file = open(out_folder / (stop.stop_code + ".json"), 'a')
+            json.dump(stop, file, indent = 4)
             file.close()
 
     def write_dict(self, dictionary, out_folder, filename):

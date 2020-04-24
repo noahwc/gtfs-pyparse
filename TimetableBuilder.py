@@ -1,6 +1,5 @@
 # Builds a timetable for each stop id
 from argparse import ArgumentParser
-from StopTimes import StopTimes
 from pathlib import Path
 from CalendarDates import CalendarDates
 from Calendars import Calendars
@@ -39,14 +38,13 @@ class TimetableBuilder:
 
     def link_stoptimes(self, path):
         trips = Trips(path)
-        stops = StopCodes(path)
+        self.stops = StopCodes(path, trips)
         read_stoptimes = Reader( path / "stop_times.txt")
         line = read_stoptimes.get_line()
         counter = 0
-        self.stops = StopCodes(path)
         while line:
             stop_time = (StopTime(line, trips.trip_list))
-            stops.add_stop_time(stop_time)
+            self.stops.add_stop_time(stop_time)
             line = read_stoptimes.get_line()
             counter = counter + 1
             print(str(counter) + " stops parsed.")
@@ -55,9 +53,9 @@ class TimetableBuilder:
 
     def write_stops(self, out_folder):
         print("Writing timetables to file...")
-        for stop in self.stops:
-            file = open(out_folder / (stop.stop_code + ".json"), 'a')
-            json.dump(stop, file, indent = 4)
+        for current_stop in self.stops.stop_codes:
+            file = open(out_folder / (self.stops.stop_codes[current_stop].stop_code + ".json"), 'a')
+            json.dump(self.stops.stop_codes[current_stop].stop_times, file, indent = 4)
             file.close()
 
     def write_dict(self, dictionary, out_folder, filename):

@@ -1,9 +1,15 @@
 # This file models the data of a single line of a calendar_dates.txt gtfs file
 from Reader import Reader
-from CalendarDate import CalendarDate
 from pathlib import Path
 from collections import defaultdict
 
+class CalendarDate:
+
+    def __init__(self, line):
+        self.date = line["date"]
+        self.service_id = line["service_id"]
+        self.exception_type = line["exception_type"] 
+        
 class CalendarDates:
 
     def __init__(self, path):

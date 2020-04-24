@@ -1,6 +1,5 @@
 from Reader import Reader
 from pathlib import Path
-from StopTimes import StopTime
 from collections import defaultdict
 
 class StopTime:
@@ -27,14 +26,15 @@ class StopCode:
 
 class StopCodes:
 
-    def __init__(self, path):
+    def __init__(self, path, trips):
         read_stop_codes = Reader(path / "stops.txt")
         line = read_stop_codes.get_line()
+        self.stop_codes = {}
         while line:
-            stop = StopCode(line)
+            stop = StopCode(line, trips)
             self.stop_codes[stop.stop_id] = stop
             line = read_stop_codes.get_line()
         read_stop_codes.end()
 
     def add_stop_time(self, stop_time):
-        self.stop_code[stop_time.stop_id].append({"departure_time" : stop_time.departure_time, "route_id" : stop_time.trip.route_id })
+        self.stop_codes[stop_time.stop_id].stop_times[stop_time.trip.service_id].append({"departure_time" : stop_time.departure_time, "route_id" : stop_time.trip.route_id })
